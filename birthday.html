@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Happy Birthday Afua</title>
+<style>
+html, body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  font-family:Arial, sans-serif;
+  overflow:hidden;
+  background: radial-gradient(circle at top, #ff9a9e, #fad0c4, #a6c1eb);
+}
+
+#heartCanvas{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+}
+
+#page4 img,
+#page4 button{
+  position:relative;
+  z-index:2;
+}
+
+.section{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  opacity:0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.section.active{
+  opacity:1;
+  z-index:2;
+}
+
+.video, .gif{
+  width:70%;
+  max-width:400px;
+  border-radius:15px;
+  margin-top:20px;
+}
+
+.button{
+  margin-top:15px;
+  font-size:20px;
+  padding:10px 20px;
+  background:#FF4C4C;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  color:white;
+  font-weight:bold;
+  margin-left:5px;
+  margin-right:5px;
+  transition: transform 0.2s;
+}
+
+.button:hover{
+  transform: scale(1.1);
+}
+
+.card{
+  background:#FF3B3B;
+  padding:25px 35px;
+  border-radius:20px;
+  max-width:500px;
+  margin-top:20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  font-size:18px;
+  line-height:1.5;
+  color:white;
+  text-align:center;
+  position:relative;
+  transform: rotate(0deg);
+}
+
+#emojis{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+
+.emoji{
+  position:absolute;
+  top:-50px;
+  animation:fall linear infinite;
+}
+
+@keyframes fall{
+  0%{transform:translateY(-50px) rotate(0deg);}
+  100%{transform:translateY(110vh) rotate(360deg);}
+}
+
+#reactionGif {
+  transition: transform 0.3s ease, opacity 0.5s ease;
+  transform: scale(0);
+  opacity: 0;
+  margin-bottom:15px;
+  width:150px;
+  border-radius:10px;
+}
+#reactionGif.show {
+  transform: scale(1.5);
+  opacity: 1;
+}
+
+/* Fix back button on page5 to be clickable above canvas */
+#page5 button {
+  position: relative;
+  z-index: 2;
+}
+</style>
+</head>
+<body>
+
+<div id="emojis"></div>
+
+<div id="page1" class="section active">
+  <video id="birthdayVideo" class="video" autoplay muted>
+    <source src="birthday.mp4" type="video/mp4">
+  </video>
+  <button id="letsGo1" class="button" style="display:none;">Let's go! 🎉</button>
+</div>
+
+<div id="page2" class="section">
+  <img id="gif1" class="gif" src="gif1.gif">
+  <div class="card" id="card1">
+    Happy Birthday🎂🎉🎊 my Afua bed wetter😭😍. May the new age bring you peace and comfort😌. May your life be filled with joy and happiness🎉🥹. May your life be as soft as your boobs🥲😂. I love you soooooo sooooooooo much Afua🥹😩❤️. i wish you all the happiness in the world, you deserve it. God keep you safe for me🙏🏾. I love you Afua❤️.
+  </div>
+  <div>
+    <button id="back1" class="button">⬅️ Back</button>
+    <button id="next1" class="button">Next ➡️</button>
+  </div>
+</div>
+
+<div id="page3" class="section">
+  <img id="reactionGif" src="reaction.gif" style="display:none;">
+  <div class="card" id="giftCard" style="cursor:pointer;">
+    🎁 Click the box to choose your gift! 🎁
+  </div>
+  <div id="giftOptions" style="display:none; margin-top:20px;">
+    <button class="button giftOption">A nice Dress 👗</button>
+    <button class="button giftOption">A gift of your choice🙂</button>
+    <button class="button giftOption">Spend the Weekend with You😛😋</button>
+    <button class="button giftOption">A Date night with You 💖</button>
+    <button class="button giftOption">Me🥹😮‍💨</button>
+  </div>
+  <div style="margin-top:20px;">
+    <button id="back2" class="button">⬅️ Back</button>
+    <button id="next3" class="button">Next ➡️</button>
+  </div>
+</div>
+
+<div id="page4" class="section">
+  <img id="gif2" class="gif" src="gif2.gif">
+  <div style="margin-top:20px;">
+    <button id="back3" class="button">⬅️ Back</button>  <!-- Added back button -->
+    <button id="next4" class="button">Next ➡️</button>
+  </div>
+</div>
+
+
+<div id="page5" class="section">
+  <canvas id="heartCanvas"></canvas>
+  <div style="margin-top:20px;">
+    <button id="back4" class="button">⬅️ Back</button>
+  </div>
+</div>
+
+<script>
+const emojisContainer = document.getElementById('emojis');
+const emojiList = ['🎈','❤️','🎊']; 
+const confettiColors = ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1b1', '#f9bec7', '#f7cad0', '#b9fbc0', '#ade8f4', '#90e0ef'];
+
+
+for(let i=0;i<60;i++){
+  const e = document.createElement('div');
+  e.className='emoji';
+  e.textContent = emojiList[Math.floor(Math.random()*emojiList.length)];
+  e.style.left=Math.random()*95+'%';
+  e.style.fontSize=(20+Math.random()*20)+'px';
+  e.style.animationDuration=(6+Math.random()*5)+'s';
+  e.style.animationDelay=Math.random()*5+'s';
+  emojisContainer.appendChild(e);
+}
+
+for(let i=0;i<100;i++){
+  const c = document.createElement('div');
+  c.className='emoji';
+  c.textContent = '⬤';
+  c.style.color = confettiColors[Math.floor(Math.random()*confettiColors.length)];
+  c.style.left = Math.random()*95+'%';
+  c.style.fontSize = (8+Math.random()*15)+'px';
+  c.style.animationDuration = (4+Math.random()*6)+'s';
+  c.style.animationDelay = Math.random()*5+'s';
+  emojisContainer.appendChild(c);
+}
+
+
+const page1 = document.getElementById('page1');
+const page2 = document.getElementById('page2');
+const page3 = document.getElementById('page3');
+const page4 = document.getElementById('page4');
+const page5 = document.getElementById('page5');
+
+
+const video = document.getElementById('birthdayVideo');
+const letsGo1 = document.getElementById('letsGo1');
+const back1 = document.getElementById('back1');
+const next1 = document.getElementById('next1');
+const back2 = document.getElementById('back2');
+const next3 = document.getElementById('next3');
+const back3 = document.getElementById('back3');
+const next4 = document.getElementById('next4'); 
+const back4 = document.getElementById('back4'); 
+
+
+const giftCard = document.getElementById('giftCard');
+const giftOptions = document.getElementById('giftOptions');
+const gifts = document.querySelectorAll('.giftOption');
+const reactionGif = document.getElementById('reactionGif');
+
+
+video.onended = () => { letsGo1.style.display='inline-block'; };
+
+
+letsGo1.onclick = () => { page1.classList.remove('active'); page2.classList.add('active'); };
+back1.onclick = () => { page2.classList.remove('active'); page1.classList.add('active'); };
+next1.onclick = () => { page2.classList.remove('active'); page3.classList.add('active'); };
+back2.onclick = () => { page3.classList.remove('active'); page2.classList.add('active'); };
+next3.onclick = () => { page3.classList.remove('active'); page4.classList.add('active'); };
+back3.onclick = () => {
+  page4.classList.remove('active');
+  page3.classList.add('active');
+};
+next4.onclick = () => { page4.classList.remove('active'); page5.classList.add('active'); };
+back4.onclick = () => { page5.classList.remove('active'); page4.classList.add('active'); };
+
+
+giftCard.onclick = () => { giftOptions.style.display = 'block'; };
+gifts.forEach(g => {
+  g.onclick = () => {
+    giftCard.innerHTML = `You chose: ${g.innerText}! 🎉`;
+    giftOptions.style.display = 'none';
+    reactionGif.style.display = 'block';
+    reactionGif.classList.add('show');
+    setTimeout(() => {
+      reactionGif.classList.remove('show');
+      setTimeout(()=>{reactionGif.style.display='none';},500);
+    },3000);
+  };
+});
+
+
+const heartCanvas = document.getElementById("heartCanvas");
+const hctx = heartCanvas.getContext("2d");
+function resizeHeart(){ heartCanvas.width = window.innerWidth; heartCanvas.height = window.innerHeight; }
+resizeHeart();
+window.addEventListener("resize", resizeHeart);
+
+let heartTime = 0;
+function heartX(t){ return 16*Math.pow(Math.sin(t),3); }
+function heartY(t){ return 13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t); }
+
+function drawHeart(){
+  hctx.clearRect(0,0,heartCanvas.width,heartCanvas.height);
+  hctx.fillStyle = "#ff4c6d";
+  hctx.font = "14px Arial";
+  let scale = 12 + Math.sin(heartTime)*2;
+  for(let t=0; t<Math.PI*2; t+=0.08){
+    let x = heartX(t)*scale + heartCanvas.width/2;
+    let y = -heartY(t)*scale + heartCanvas.height/2;
+    hctx.save();
+    hctx.translate(x,y);
+    hctx.rotate(heartTime*0.5);
+    hctx.fillText("I love you Afua",0,0);
+    hctx.restore();
+  }
+  heartTime += 0.03;
+  requestAnimationFrame(drawHeart);
+}
+drawHeart();
+</script>
+</body>
+</html>
